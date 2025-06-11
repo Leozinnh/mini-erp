@@ -52,20 +52,28 @@ DB_USERNAME=root
 DB_PASSWORD=sua_senha
 ```
 
-4. **Execute as migrations:**
+4. **Crie o banco de dados:**
+
+```bash
+create database `mini-erp`
+default character set utf8
+default collate utf8_general_ci;
+```
+
+5. **Execute as migrations:**
 
 ```bash
 php artisan migrate
 ```
 
-5. **(Opcional) Compile os assets:**
+6. **(Opcional) Compile os assets:**
 
 ```bash
 npm install
 npm run dev
 ```
 
-6. **Inicie o servidor local:**
+7. **Inicie o servidor local:**
 
 ```bash
 php artisan serve
@@ -85,7 +93,7 @@ _Listar Produtos_
 [
     {
         "id": 6,
-        "nome": "oi",
+        "nome": "Capinha Celular",
         "preco": "22.00",
         "created_at": "2025-06-11T02:27:39.000000Z",
         "updated_at": "2025-06-11T02:27:39.000000Z",
