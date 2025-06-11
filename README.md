@@ -7,12 +7,10 @@ Mini ERP desenvolvido com Laravel, que permite o controle de **Produtos**, **Ped
 ## ✅ Funcionalidades
 
 -   Cadastro e atualização de produtos com variações e controle de estoque
--   Carrinho de compras com controle em sessão
 -   Regras de frete com base no subtotal do pedido
 -   Aplicação de cupons com validade e valor mínimo
 -   Consulta de endereço via API [ViaCEP](https://viacep.com.br/)
--   Envio de e-mail ao finalizar o pedido
--   Webhook para atualização/cancelamento de pedidos
+-   API para consumo externo (JSON)
 
 ---
 
@@ -77,45 +75,10 @@ Acesse: http://localhost:8000
 
 ---
 
-## 🌐 Colocando online (produção)
-
-1. **Suba os arquivos via FTP ou Git no servidor.**
-
-2. **No servidor, execute:**
-
-```bash
-cd /var/www/html/mini-erp
-composer install --no-dev --optimize-autoloader
-```
-
-3. **Configure permissões:**
-
-```bash
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data .
-```
-
-4. **Copie e edite o `.env`:**
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-5. **Rode as migrations:**
-
-```bash
-php artisan migrate
-```
-
-7. **Configure seu Apache/Nginx para apontar para a pasta `/public`.**
-
----
-
 ## 🔗 Api de Consumo
 
+_Listar Produtos_
 **Endpoint:** `GET /api/produtos`
-
 **Exemplo de retorno:**
 
 ```json
@@ -131,8 +94,8 @@ php artisan migrate
 ]
 ```
 
+_Criar Produto_
 **Endpoint:** `POST /api/produto/new`
-
 **Exemplo de payload:**
 
 ```json
@@ -149,5 +112,37 @@ php artisan migrate
             "quantidade": 5
         }
     ]
+}
+```
+
+_Editar Produto_
+**Endpoint:** `PUT /api/produto/{id}`
+**Exemplo de payload:**
+
+```json
+{
+    "nome": "Produto Editado",
+    "preco": 150.0,
+    "variacoes": [
+        {
+            "id": 1,
+            "nome": "Variação Atualizada",
+            "quantidade": 8
+        },
+        {
+            "nome": "Nova Variação",
+            "quantidade": 4
+        }
+    ]
+}
+```
+
+_Excluir Produto_
+**Endpoint:** `DELETE /api/produto/{id}`
+**Exemplo de resposta:**
+
+```json
+{
+    "message": "Produto deletado com sucesso"
 }
 ```
