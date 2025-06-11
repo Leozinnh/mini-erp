@@ -47,7 +47,7 @@ cp .env.example .env
 Edite o arquivo `.env` com suas credenciais:
 
 ```bash
-DB_DATABASE=erp
+DB_DATABASE=mini-erp
 DB_USERNAME=root
 DB_PASSWORD=sua_senha
 ```
