@@ -29,45 +29,45 @@ Mini ERP desenvolvido com Laravel, que permite o controle de **Produtos**, **Ped
 
 1. **Clone o repositório:**
 ```bash
-   git clone https://github.com/seu-usuario/mini-erp-laravel.git  
-   cd mini-erp-laravel
+git clone https://github.com/seu-usuario/mini-erp-laravel.git  
+cd mini-erp-laravel
 ```
 
 2. **Instale as dependências PHP:**
 ```bash
-   composer install
+composer install
 ```
 
 3. **Copie o arquivo `.env` de exemplo e configure:**
 ```bash
-   cp .env.example .env
+cp .env.example .env
 
-   Edite o arquivo `.env` com suas credenciais:
+Edite o arquivo `.env` com suas credenciais:
 
-   DB_DATABASE=erp  
-   DB_USERNAME=root  
-   DB_PASSWORD=sua_senha
+DB_DATABASE=erp  
+DB_USERNAME=root  
+DB_PASSWORD=sua_senha
 ```
 
 4. **Gere a chave da aplicação:**
 ```bash
-   php artisan key:generate
+php artisan key:generate
 ```
 
 5. **Execute as migrations:**
 ```bash
-   php artisan migrate
+php artisan migrate
 ```
 
 6. **(Opcional) Compile os assets:**
 ```bash
-   npm install  
-   npm run dev
+npm install  
+npm run dev
 ```
 
 7. **Inicie o servidor local:**
 ```bash
-   php artisan serve
+php artisan serve
 ```
 
    Acesse: http://localhost:8000
@@ -80,30 +80,30 @@ Mini ERP desenvolvido com Laravel, que permite o controle de **Produtos**, **Ped
 
 2. **No servidor, execute:**
 ```bash
-   cd /var/www/html/mini-erp  
-   composer install --no-dev --optimize-autoloader
+cd /var/www/html/mini-erp  
+composer install --no-dev --optimize-autoloader
 ```
 
 3. **Configure permissões:**
 ```bash
-   chmod -R 775 storage bootstrap/cache  
-   chown -R www-data:www-data .
+chmod -R 775 storage bootstrap/cache  
+chown -R www-data:www-data .
 ```
 
 4. **Copie e edite o `.env`:**
 ```bash
-   cp .env.example .env  
-   nano .env
+cp .env.example .env  
+nano .env
 ```
 
 5. **Gere a chave da aplicação:**
 ```bash
-   php artisan key:generate
+php artisan key:generate
 ```
 
 6. **Rode as migrations:**
 ```bash
-   php artisan migrate
+php artisan migrate
 ```
 
 7. **Configure seu Apache/Nginx para apontar para a pasta `/public`.**
