@@ -22,6 +22,12 @@ class ProdutoController extends Controller
         return view('produtos.index', compact('produtos'));
     }
 
+    public function listJson()
+    {
+        $produtos = Produto::with('variacoes.estoque')->get();
+        return response()->json($produtos, 200);
+    }
+
     public function create()
     {
         return view('produtos.create');

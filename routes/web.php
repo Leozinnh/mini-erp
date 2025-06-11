@@ -13,6 +13,9 @@ Route::resource('cupons', \App\Http\Controllers\CupomController::class);
 Route::resource('produtos', ProdutoController::class);
 
 // Rota de back-end para uso de API
-Route::post('/produtos/new', [ProdutoController::class, 'storeJson'])->name('produtos.storeJson');
-Route::put('/produtos/{produto}', [ProdutoController::class, 'updateJson'])->name('produtos.updateJson');
-Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroyJson'])->name('produtos.destroyJson');
+Route::prefix('api')->group(function () {
+    Route::get('/produtos', [ProdutoController::class, 'listJson'])->name('api.produtos');
+    Route::post('/produto/new', [ProdutoController::class, 'storeJson'])->name('api.produto.store');
+    Route::put('/produto/{produto}', [ProdutoController::class, 'updateJson'])->name('api.produto.update');
+    Route::delete('/produto/{produto}', [ProdutoController::class, 'destroyJson'])->name('api.produto.destroy');
+});
