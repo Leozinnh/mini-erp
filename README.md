@@ -28,7 +28,7 @@ Mini ERP desenvolvido com Laravel, que permite o controle de **Produtos**, **Ped
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/seu-usuario/mini-erp-laravel.git
+git clone https://github.com/Leozinnh/mini-erp.git
 cd mini-erp-laravel
 ```
 
