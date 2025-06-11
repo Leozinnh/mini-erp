@@ -40,10 +40,11 @@ class ProdutoController extends Controller
     {
         $request->validate([
             'nome' => 'required',
-            'preco' => 'required|numeric',
+            'preco' => 'required',
             'variacoes.*.nome' => 'required',
             'variacoes.*.quantidade' => 'required|integer',
         ]);
+        $request->merge(['preco' => str_replace(',', '.', $request->preco)]);
 
         $produto = Produto::create($request->only('nome', 'preco'));
 
@@ -91,7 +92,12 @@ class ProdutoController extends Controller
 
     public function update(Request $request, Produto $produto)
     {
-        $produto->update($request->only('nome', 'preco'));
+        $precoFormatado = str_replace(['.', ','], ['', '.'], $request->input('preco'));
+
+        $produto->update([
+            'nome' => $request->input('nome'),
+            'preco' => floatval($precoFormatado)
+        ]);
 
         foreach ($request->variacoes as $var) {
             if (isset($var['id'])) {
