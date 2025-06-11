@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
+            $table->decimal('subtotal', 10, 2);      // valor do subtotal do pedido
+            $table->decimal('frete', 10, 2);         // valor do frete
+            $table->string('cep', 9);                 // CEP do endereço
+            $table->string('endereco');               // endereço completo (logradouro)
             $table->timestamps();
         });
     }

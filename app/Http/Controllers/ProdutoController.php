@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Produto;
 use App\Models\Variacao;
 use App\Models\Estoque;
+use App\Models\ItemPedido;
+use App\Models\Pedido;
+use Illuminate\Support\Facades\Mail;
 
 class ProdutoController extends Controller
 {
@@ -167,5 +170,85 @@ class ProdutoController extends Controller
         return response()->json([
             'message' => 'Produto deletado com sucesso',
         ]);
+    }
+
+
+    public function comprar(Produto $produto)
+    {
+        $produto->load('variacoes.estoque');
+        return view('produtos.comprar', compact('produto'));
+    }
+
+    public function finalizar(Request $request)
+    {
+        $request->validate([
+            'produto_id' => 'required|exists:produtos,id',
+            'variacao_id' => 'required|exists:variacoes,id',
+            'quantidade' => 'required|integer|min:1',
+            'cep' => 'required|string|size:8',
+        ]);
+
+        $variacao = Variacao::with('produto', 'estoque')->findOrFail($request->variacao_id);
+
+        // Verifica estoque
+        if ($variacao->estoque->quantidade < $request->quantidade) {
+            return back()->withErrors(['quantidade' => 'Estoque insuficiente']);
+        }
+
+        $subtotal = $variacao->produto->preco * $request->quantidade;
+        $frete = 0;
+
+        // Cálculo do frete
+        if ($subtotal >= 52 && $subtotal <= 166.59) {
+            $frete = 15;
+        } elseif ($subtotal > 200) {
+            $frete = 0;
+        } else {
+            $frete = 20;
+        }
+
+        // Consulta o CEP via ViaCEP
+        $endereco = Http::get("https://viacep.com.br/ws/{$request->cep}/json/")->json();
+
+        // Decrementa o estoque
+        $variacao->estoque->decrement('quantidade', $request->quantidade);
+
+        // Cria o pedido
+        $pedido = Pedido::create([
+            'valor_total' => $subtotal + $frete,
+            'status' => 'pendente',
+            'cep' => $request->cep,
+            'endereco' => $endereco['logradouro'] ?? '',
+            'bairro' => $endereco['bairro'] ?? '',
+            'cidade' => $endereco['localidade'] ?? '',
+            'uf' => $endereco['uf'] ?? '',
+        ]);
+
+        // Cria o item do pedido
+        ItemPedido::create([
+            'pedido_id' => $pedido->id,
+            'produto_id' => $variacao->produto->id,
+            'variacao_id' => $variacao->id,
+            'quantidade' => $request->quantidade,
+            'preco_unitario' => $variacao->produto->preco,
+        ]);
+
+        try {
+            // Envia e-mail (mock)
+            Mail::raw("Seu pedido #{$pedido->id} foi criado com sucesso!", function ($message) {
+                $message->to('cliente@example.com')->subject('Confirmação de Pedido');
+            });
+
+            // Webhook (mock)
+            Http::post('https://webhook.site/exemplo', [
+                'pedido_id' => $pedido->id,
+                'status' => $pedido->status,
+            ]);
+        } catch (\Throwable $e) {
+            // Log de erro (mock)
+            \Log::error('Erro ao enviar e-mail ou webhook: ' . $e->getMessage());
+        }
+
+        return redirect()->route('produtos.index')->with('success', 'Pedido realizado com sucesso!');
     }
 }

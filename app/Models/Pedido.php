@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Pedido extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'subtotal',
+        'frete',
+        'cep',
+        'endereco'
+    ];
+    public function itens()
+    {
+        return $this->hasMany(ItemPedido::class);
+    }
 }

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Variacao extends Model
 {
     use HasFactory;
-
     protected $table = 'variacoes';  // aqui o nome correto da tabela
 
     protected $fillable = ['produto_id', 'nome'];

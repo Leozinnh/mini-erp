@@ -5,7 +5,10 @@
 @section('content')
     <div class="d-flex justify-content-between mb-3">
         <h2>Produtos</h2>
-        <a href="{{ route('produtos.create') }}" class="btn btn-primary">Novo Produto</a>
+        <div>
+            <a href="{{ route('produtos.create') }}" class="btn btn-primary">Novo Produto</a>
+            <a href="{{ route('carrinho.index') }}" class="btn btn-secondary">🛒 Carrinho</a>
+        </div>
     </div>
 
     <table class="table table-bordered">
@@ -35,6 +38,7 @@
                             @csrf @method('DELETE')
                             <button class="btn btn-sm btn-danger" onclick="return confirm('Excluir?')">Excluir</button>
                         </form>
+                        <a href="{{ route('produtos.comprar', $produto) }}" class="btn btn-sm btn-success">Comprar</a>
                     </td>
                 </tr>
             @endforeach
