@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cupoms', function (Blueprint $table) {
+        Schema::create('cupons', function (Blueprint $table) {
             $table->id();
+            $table->string('codigo')->unique();
+            $table->decimal('desconto', 8, 2);
+            $table->decimal('valor_minimo', 8, 2)->default(0);
+            $table->date('validade');
             $table->timestamps();
         });
     }

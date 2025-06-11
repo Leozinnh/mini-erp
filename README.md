@@ -41,9 +41,9 @@ composer install
 3. **Copie o arquivo `.env` de exemplo e configure:**
 ```bash
 cp .env.example .env
-
+```
 Edite o arquivo `.env` com suas credenciais:
-
+```bash
 DB_DATABASE=erp  
 DB_USERNAME=root  
 DB_PASSWORD=sua_senha
@@ -96,12 +96,7 @@ cp .env.example .env
 nano .env
 ```
 
-5. **Gere a chave da aplicação:**
-```bash
-php artisan key:generate
-```
-
-6. **Rode as migrations:**
+5. **Rode as migrations:**
 ```bash
 php artisan migrate
 ```

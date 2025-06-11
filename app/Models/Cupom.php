@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Cupom extends Model
 {
     use HasFactory;
+    protected $fillable = ['codigo', 'desconto', 'valor_minimo', 'validade'];
 }

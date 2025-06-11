@@ -5,22 +5,14 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProdutoController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('produtos.index');
 });
 
-Route::get('/produtos', [ProdutoController::class, 'index']);
-Route::post('/produtos', [ProdutoController::class, 'store']);
-Route::post('/carrinho', [CarrinhoController::class, 'adicionar']);
-Route::post('/pedido/finalizar', [PedidoController::class, 'finalizar']);
+Route::resource('cupons', \App\Http\Controllers\CupomController::class);
+Route::resource('produtos', ProdutoController::class);
+
+// Rota de back-end para uso de API
+Route::post('/produtos/new', [ProdutoController::class, 'storeJson'])->name('produtos.storeJson');
+Route::put('/produtos/{produto}', [ProdutoController::class, 'updateJson'])->name('produtos.updateJson');
+Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroyJson'])->name('produtos.destroyJson');
