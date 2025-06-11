@@ -6,40 +6,31 @@ use Illuminate\Http\Request;
 use App\Models\Produto;
 use App\Models\Pedido;
 use App\Models\Cupom;
+use App\Models\Variacao;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
 class CarrinhoController extends Controller
 {
-    public function adicionar(Request $request, Produto $produto)
-    {
-        $carrinho = session()->get('carrinho', []);
-
-        $carrinho[] = [
-            'produto_id' => $produto->id,
-            'nome' => $produto->nome,
-            'preco' => $produto->preco,
-        ];
-
-        session()->put('carrinho', $carrinho);
-
-        return redirect()->route('carrinho.index')->with('success', 'Produto adicionado!');
-    }
-
     public function index()
     {
         $carrinho = session('carrinho', []);
-        $subtotal = array_sum(array_column($carrinho, 'preco'));
+        $total = array_sum(array_column($carrinho, 'preco'));
+        $subtotal = 0;
+        foreach ($carrinho as $item) {
+            $subtotal += $item['preco'] * $item['quantidade'];
+        }
+        $desconto = 0;
 
         $frete = 20;
-        if ($subtotal >= 52 && $subtotal <= 166.59) {
+        if ($total >= 52 && $total <= 166.59) {
             $frete = 15;
-        } elseif ($subtotal > 200) {
+        } elseif ($total > 200) {
             $frete = 0;
         }
 
-        return view('carrinho.index', compact('carrinho', 'subtotal', 'frete'));
+        return view('carrinho.index', compact('carrinho', 'total', 'subtotal', 'frete', 'desconto'));
     }
 
     public function finalizar(Request $request)
@@ -76,5 +67,11 @@ class CarrinhoController extends Controller
         }
 
         return redirect()->route('produtos.index')->with('success', 'Pedido finalizado!');
+    }
+
+    public function limpar()
+    {
+        session()->forget('carrinho');
+        return redirect()->route('carrinho.index')->with('success', 'Carrinho limpo com sucesso!');
     }
 }

@@ -19,12 +19,16 @@ class PedidoController extends Controller
         $variacao = $produto->variacoes->where('id', $request->variacao_id)->first();
 
         if (!$variacao) {
-            return back()->withErrors(['variacao_id' => 'Variação inválida']);
+            return back()
+                ->withErrors(['message' => 'Variação do produto não encontrada.'])
+                ->withInput();
         }
 
         $estoque = $variacao->estoque->quantidade ?? 0;
         if ($request->quantidade > $estoque) {
-            return back()->withErrors(['quantidade' => 'Quantidade solicitada maior que estoque disponível']);
+            return back()
+                ->withErrors(['message' => "Só temos {$estoque} unidade(s) em estoque."])
+                ->withInput();
         }
 
         // Pega o carrinho da sessão (array)
@@ -38,20 +42,26 @@ class PedidoController extends Controller
             $novoTotal = $carrinho[$key]['quantidade'] + $request->quantidade;
 
             if ($novoTotal > $estoque) {
-                return back()->withErrors(['quantidade' => 'Quantidade total no carrinho maior que estoque disponível']);
+                return back()
+                    ->withErrors(['message' => "Só temos {$estoque} unidade(s) em estoque."])
+                    ->withInput();
             }
 
             $carrinho[$key]['quantidade'] = $novoTotal;
+            $carrinho[$key]['subtotal'] = $carrinho[$key]['preco'] * $novoTotal; // << AQUI
+
         } else {
             // Adiciona novo item no carrinho
             $carrinho[$key] = [
                 'produto_id' => $produto->id,
                 'variacao_id' => $variacao->id,
                 'nome' => $produto->nome . ' — ' . $variacao->nome,
-                'preco' => $produto->preco, // ou variação de preço, se houver
+                'preco' => $produto->preco, // ou preço da variação se for diferente
                 'quantidade' => $request->quantidade,
+                'subtotal' => $produto->preco * $request->quantidade, // << AQUI
             ];
         }
+
 
         session(['carrinho' => $carrinho]);
 
