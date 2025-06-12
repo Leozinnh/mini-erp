@@ -46,12 +46,12 @@
                     </div>
 
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{{ route('produtos.index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Cancelar
-                        </a>
                         <button type="submit" class="btn btn-success">
                             <i class="bi bi-check-circle"></i> Criar Produto
                         </button>
+                        <a href="{{ route('produtos.index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
                     </div>
                 </form>
             </div>

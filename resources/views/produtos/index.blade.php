@@ -9,6 +9,9 @@
             <a href="{{ route('produtos.create') }}" class="btn btn-outline-primary">
                 <i class="bi bi-plus-circle"></i> Novo Produto
             </a>
+            <a href="{{ route('cupom.index') }}" class="btn btn-outline-info">
+                <i class="bi bi-plus-circle"></i> Cupons
+            </a>
             <a href="{{ route('carrinho.index') }}" class="btn btn-outline-secondary">
                 🛒 Carrinho
             </a>

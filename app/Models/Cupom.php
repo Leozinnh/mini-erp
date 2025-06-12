@@ -8,5 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Cupom extends Model
 {
     use HasFactory;
-    protected $fillable = ['codigo', 'desconto', 'valor_minimo', 'validade'];
+    protected $table = 'cupons';
+
+    protected $fillable = ['id', 'codigo', 'tipo', 'desconto', 'valor_minimo', 'validade'];
+
+    
+    public function isValido(): bool
+    {
+        return now()->lessThanOrEqualTo($this->validade);
+    }
 }

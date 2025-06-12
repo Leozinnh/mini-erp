@@ -10,10 +10,11 @@ Route::get('/', function () {
     return redirect()->route('produtos.index');
 });
 
-Route::resource('cupons', \App\Http\Controllers\CupomController::class);
+// Route::resource('cupons', \App\Http\Controllers\CupomController::class);
 Route::resource('produtos', ProdutoController::class);
 
 Route::get('/produtos/{produto}/comprar', [ProdutoController::class, 'comprar'])->name('produtos.comprar');
+
 Route::post('/finalizar-pedido', [PedidoController::class, 'finalizar'])->name('pedido.finalizar');
 Route::post('/carrinho/adicionar', [PedidoController::class, 'adicionarAoCarrinho'])->name('carrinho.adicionar');
 
@@ -22,7 +23,14 @@ Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.in
 Route::post('/carrinho/finalizar', [CarrinhoController::class, 'finalizar'])->name('carrinho.finalizar');
 Route::post('/carrinho/limpar', [CarrinhoController::class, 'limpar'])->name('carrinho.limpar');
 
-Route::post('/cupom/validar', [CupomController::class, 'validarCupom'])->name('cupom.validar');
+Route::resource('cupons', CupomController::class);
+Route::get('/cupom', [CupomController::class, 'index'])->name('cupom.index');
+Route::post('/cupom/validar', [CupomController::class, 'validar'])->name('cupom.validar');
+
+Route::get('/sucesso/{pedido}', function ($pedidoId) {
+    $pedido = App\Models\Pedido::findOrFail($pedidoId);
+    return view('sucesso', compact('pedido'));
+})->name('sucesso');
 
 // Rota de back-end para uso de API
 Route::prefix('api')->group(function () {

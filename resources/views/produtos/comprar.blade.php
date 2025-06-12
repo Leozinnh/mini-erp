@@ -38,12 +38,12 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="{{ route('produtos.index') }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left"></i> Voltar
-                                </a>
                                 <button type="submit" class="btn btn-success">
                                     <i class="bi bi-cart-plus"></i> Adicionar ao Carrinho
                                 </button>
+                                <a href="{{ route('produtos.index') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Voltar
+                                </a>
                             </div>
                         </form>
                     </div>

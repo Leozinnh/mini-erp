@@ -45,8 +45,10 @@
                         <div class="card-body">
                             <h5 class="card-title mb-3">Resumo do Pedido</h5>
 
-                            <p><strong>Total:</strong> R$ {{ number_format($subtotal, 2, ',', '.') }}</p>
-                            <p><strong>Frete:</strong> R$ {{ number_format($frete, 2, ',', '.') }}</p>
+                            <p><strong>Total:</strong> <span id="total">R$
+                                    {{ number_format($subtotal, 2, ',', '.') }}</span></p>
+                            {{-- <p><strong>Frete:</strong> R$ {{ number_format($frete, 2, ',', '.') }}</p> --}}
+                            <p><strong>Frete:</strong> <span id="frete"></span></p>
 
                             @php
                                 $totalComDesconto = $subtotal + $frete;
@@ -105,7 +107,19 @@
 @section('scripts')
     <script>
         $(function() {
+            let subtotal = parseFloat("{{ $subtotal }}");
+            let frete = parseFloat("{{ $frete }}");
+            let desconto = 0;
             $('#cep').mask('00000-000');
+
+            function calcularFrete(subtotal) {
+                if (subtotal >= 52 && subtotal <= 166.59) {
+                    return 15;
+                } else if (subtotal > 200) {
+                    return 0;
+                }
+                return 20;
+            }
 
             $('#cep').on('blur', function() {
                 let cep = $(this).val().replace(/\D/g, '');
@@ -119,6 +133,14 @@
                                 <strong>Endereço:</strong> ${data.logradouro}, ${data.bairro}, ${data.localidade} - ${data.uf}
                             </div>
                         `);
+
+                                frete = calcularFrete(subtotal);
+                                let totalComDesconto = subtotal + frete - desconto;
+                                if (totalComDesconto < 0) totalComDesconto = 0;
+
+                                $('#frete').text('R$ ' + frete.toFixed(2).replace('.', ','));
+                                $('h5.mb-3').text('Total: R$ ' + totalComDesconto.toFixed(2).replace(
+                                    '.', ','));
                             } else {
                                 $('#endereco').html('');
                                 Swal.fire({
@@ -138,7 +160,18 @@
                 }
             });
 
-            // Validação simples do cupom via AJAX (exemplo básico)
+            function atualizarResumo() {
+                let totalComDesconto = subtotal + frete - desconto;
+                if (totalComDesconto < 0) totalComDesconto = 0;
+
+                $('p strong:contains("Desconto:")').parent().remove();
+                if (desconto > 0) {
+                    $("#total").css("text-decoration", "line-through");
+                }
+
+                $('h5.mb-3').text('Total: R$ ' + totalComDesconto.toFixed(2).replace('.', ',')).css('font-weight',
+                    '700');
+            }
             $('#validar-cupom').click(function() {
                 let cupom = $('#cupom').val().trim();
                 if (cupom.length === 0) {
@@ -147,7 +180,6 @@
                     return;
                 }
 
-                // Exemplo de requisição para rota que valida cupom (você deve criar essa rota/endpoint)
                 $.ajax({
                     url: "{{ route('cupom.validar') }}",
                     method: 'POST',
@@ -157,18 +189,42 @@
                     },
                     success: function(response) {
                         if (response.valido) {
+                            // Calcula desconto conforme tipo (porcentagem ou fixo)
+                            if (response.tipo === 'porcentagem') {
+                                desconto = subtotal * (response.desconto / 100);
+                            } else {
+                                desconto = response.desconto;
+                            }
                             $('#feedback-cupom').text(
-                                `Cupom válido! Desconto: R$ ${response.desconto.toFixed(2)}`
+                                `Cupom válido! Desconto: R$ ${desconto.toFixed(2).replace('.', ',')}`
                             ).removeClass('text-danger').addClass('text-success');
+
+                            atualizarResumo();
+
+                            // Guardar o cupom na sessão para envio no form (hidden input)
+                            if ($('#cupom-input').length === 0) {
+                                $('<input>').attr({
+                                    type: 'hidden',
+                                    id: 'cupom-input',
+                                    name: 'cupom',
+                                    value: cupom
+                                }).appendTo('form');
+                            } else {
+                                $('#cupom-input').val(cupom);
+                            }
                         } else {
+                            desconto = 0;
                             $('#feedback-cupom').text('Cupom inválido ou expirado.')
                                 .removeClass('text-success').addClass('text-danger');
+                            atualizarResumo();
                         }
                     },
                     error: function() {
+                        desconto = 0;
                         $('#feedback-cupom').text(
                                 'Erro ao validar cupom. Tente novamente mais tarde.')
                             .removeClass('text-success').addClass('text-danger');
+                        atualizarResumo();
                     }
                 });
             });

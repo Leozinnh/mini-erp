@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->decimal('subtotal', 10, 2);      // valor do subtotal do pedido
             $table->decimal('frete', 10, 2);         // valor do frete
-            $table->string('cep', 9);                 // CEP do endereço
-            $table->string('endereco');               // endereço completo (logradouro)
+            $table->decimal('desconto', 10, 2)->default(0); // valor do desconto aplicado
+            $table->string('cep', 9);                // CEP do endereço
+            $table->string('endereco');             // endereço completo (logradouro)
             $table->timestamps();
         });
     }

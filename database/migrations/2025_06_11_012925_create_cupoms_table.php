@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('codigo')->unique();
             $table->decimal('desconto', 8, 2);
+            $table->enum('tipo', ['valor', 'porcentagem'])->default('valor');
             $table->decimal('valor_minimo', 8, 2)->default(0);
             $table->date('validade');
             $table->timestamps();
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cupoms');
+        Schema::dropIfExists('cupons');
     }
 };
