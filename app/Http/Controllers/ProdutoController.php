@@ -134,14 +134,11 @@ class ProdutoController extends Controller
             'variacoes.*.quantidade' => 'required_with:variacoes|integer',
         ]);
 
-        // Atualiza os dados básicos do produto
         $produto->update($request->only('nome', 'preco'));
 
-        // Atualiza ou cria variações e seus estoques
         if ($request->has('variacoes')) {
             foreach ($request->variacoes as $var) {
                 if (isset($var['id'])) {
-                    // Atualiza variação existente
                     $variacao = $produto->variacoes()->find($var['id']);
                     if ($variacao) {
                         $variacao->update(['nome' => $var['nome']]);
@@ -151,7 +148,6 @@ class ProdutoController extends Controller
                         );
                     }
                 } else {
-                    // Cria variação nova
                     $variacao = $produto->variacoes()->create(['nome' => $var['nome']]);
                     $variacao->estoque()->create(['quantidade' => $var['quantidade']]);
                 }
@@ -178,7 +174,6 @@ class ProdutoController extends Controller
         ]);
     }
 
-
     public function comprar(Produto $produto)
     {
         $produto->load('variacoes.estoque');
@@ -196,7 +191,6 @@ class ProdutoController extends Controller
 
         $variacao = Variacao::with('produto', 'estoque')->findOrFail($request->variacao_id);
 
-        // Verifica estoque
         if ($variacao->estoque->quantidade < $request->quantidade) {
             return back()->withErrors(['quantidade' => 'Estoque insuficiente']);
         }
@@ -204,7 +198,6 @@ class ProdutoController extends Controller
         $subtotal = $variacao->produto->preco * $request->quantidade;
         $frete = 0;
 
-        // Cálculo do frete
         if ($subtotal >= 52 && $subtotal <= 166.59) {
             $frete = 15;
         } elseif ($subtotal > 200) {
@@ -213,13 +206,10 @@ class ProdutoController extends Controller
             $frete = 20;
         }
 
-        // Consulta o CEP via ViaCEP
         $endereco = Http::get("https://viacep.com.br/ws/{$request->cep}/json/")->json();
 
-        // Decrementa o estoque
         $variacao->estoque->decrement('quantidade', $request->quantidade);
 
-        // Cria o pedido
         $pedido = Pedido::create([
             'valor_total' => $subtotal + $frete,
             'status' => 'pendente',
@@ -230,7 +220,6 @@ class ProdutoController extends Controller
             'uf' => $endereco['uf'] ?? '',
         ]);
 
-        // Cria o item do pedido
         ItemPedido::create([
             'pedido_id' => $pedido->id,
             'produto_id' => $variacao->produto->id,
@@ -240,12 +229,10 @@ class ProdutoController extends Controller
         ]);
 
         try {
-            // Envia e-mail (mock)
             Mail::raw("Seu pedido #{$pedido->id} foi criado com sucesso!", function ($message) {
                 $message->to('cliente@example.com')->subject('Confirmação de Pedido');
             });
 
-            // Webhook (mock)
             Http::post('https://webhook.site/exemplo', [
                 'pedido_id' => $pedido->id,
                 'status' => $pedido->status,

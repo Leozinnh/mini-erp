@@ -31,14 +31,11 @@ class PedidoController extends Controller
                 ->withInput();
         }
 
-        // Pega o carrinho da sessão (array)
         $carrinho = session('carrinho', []);
 
-        // Identificador único para evitar duplicidade (exemplo: variacao_id)
         $key = $variacao->id;
 
         if (isset($carrinho[$key])) {
-            // Atualiza a quantidade somando a existente
             $novoTotal = $carrinho[$key]['quantidade'] + $request->quantidade;
 
             if ($novoTotal > $estoque) {
@@ -48,17 +45,16 @@ class PedidoController extends Controller
             }
 
             $carrinho[$key]['quantidade'] = $novoTotal;
-            $carrinho[$key]['subtotal'] = $carrinho[$key]['preco'] * $novoTotal; // << AQUI
+            $carrinho[$key]['subtotal'] = $carrinho[$key]['preco'] * $novoTotal;
 
         } else {
-            // Adiciona novo item no carrinho
             $carrinho[$key] = [
                 'produto_id' => $produto->id,
                 'variacao_id' => $variacao->id,
                 'nome' => $produto->nome . ' — ' . $variacao->nome,
-                'preco' => $produto->preco, // ou preço da variação se for diferente
+                'preco' => $produto->preco,
                 'quantidade' => $request->quantidade,
-                'subtotal' => $produto->preco * $request->quantidade, // << AQUI
+                'subtotal' => $produto->preco * $request->quantidade,
             ];
         }
 
