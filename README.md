@@ -29,7 +29,7 @@ Mini ERP desenvolvido com Laravel, que permite o controle de **Produtos**, **Ped
 
 ```bash
 git clone https://github.com/Leozinnh/mini-erp.git
-cd mini-erp-laravel
+cd mini-erp
 ```
 
 2. **Instale as dependências PHP:**
